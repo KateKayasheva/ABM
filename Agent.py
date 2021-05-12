@@ -35,6 +35,7 @@ class RandomTrader(Agent):
     """
     def __init__(self, money, stocks):
         Agent.__init__(self, money, stocks)
+
         self.type = "RANDOM"
 
 
@@ -43,12 +44,38 @@ class RandomTrader(Agent):
        Set the order
        BUY if no stocks on hand
        If stocks > 0 choose direction at random
+       order format dictionary as {'direction': direction, 'price': price, 'quantity': quantity}
 
        """
+       # Determine the direction
        if self.stocks > 0:
            direction = random.choice(("BUY", "SELL"))
        else:
            direction = "BUY"
+
+       #  Determine price
+       # TODO: determine the price
+       price = 1
+
+       # Determine quantity
+       if direction == "SELL":
+           maxq = self.stocks
+           try:
+               quantity = random.randint(1, maxq)
+           except ValueError:
+               quantity = 1
+
+
+       elif direction == "BUY":
+           quantity = random.randint(1, int(self.money/price)) # TODO: find the lower bound
+
+
+       order = {'direction': direction, 'price': price, 'quantity': quantity}
+
+       return order
+
+
+
 
 
 
