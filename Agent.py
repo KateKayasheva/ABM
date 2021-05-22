@@ -44,13 +44,13 @@ class RandomTrader(Agent):
 
         self.type = "RANDOM"
 
-    def order(self):
+    def order(self, day):
         """
         Set the order
         BUY if no stocks on hand
         If stocks > 0 choose direction at random
         order format dictionary as {'direction': direction, 'price': price, 'quantity': quantity, 'agent': id(self)}
-
+        Day - simulation day number
         """
         # Determine the direction
         if self.stocks > 0:
@@ -59,12 +59,15 @@ class RandomTrader(Agent):
             direction = "BUY"
 
         #  Determine price
-        # TODO: determine the price
-        # Max price per stock is all the money
+        # TODO: determine the price (add average +- sigma)
 
-        price = random.randint(1, self.money*100)/100
+        if day == 0:
+            price = random.randint(1, self.money*100)/100  # From 0.01 to money
+        else:
+            price = random.randint(1, self.money*100)/100
 
         # Determine quantity
+        quantity = 0
         if direction == "SELL":
             maxq = self.stocks
             try:
@@ -75,7 +78,8 @@ class RandomTrader(Agent):
             quantity = random.randint(1, int(self.money / price))  # TODO: find the lower bound (seems fine)
 
         order = {'direction': direction, 'price': price, 'quantity': quantity, 'agent': id(self)}
+        print("Printing order from order function:", order)
         return order
 
 
-print(RandomTrader(1, 2))
+
