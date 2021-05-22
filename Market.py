@@ -38,19 +38,19 @@ class Market:
         if order['direction'] == "SELL":
             self.sellbook.append(
                 [order['price'], time, order['quantity'], order['agent']])
-            self.sellbook.sort()
+            self.sellbook.sort(key=lambda x: x[0]) # now sorts on price
         elif order['direction'] == "BUY":
             self.buybook.append(
                 [order['price'], -time, order['quantity'], order['agent']])
-            self.buybook.sort()
+            self.buybook.sort(key=lambda x: x[0])
         else:
             print("Error in add_order: direction is not in correct format:",
                     order['direction'], '-> Order from agent:', order['agent'])
 
 
-market = Market()
-market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 3, 'agent': 1}, 1)
-market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 4, 'agent': 2}, 2)
-market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 1, 'agent': 3}, 1)
-print(market.sellbook)
-print(market.buybook)
+# market = Market()
+# market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 3, 'agent': 1}, 1)
+# market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 4, 'agent': 2}, 2)
+# market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 1, 'agent': 3}, 1)
+# print(market.sellbook)
+# print(market.buybook)
