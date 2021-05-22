@@ -6,11 +6,16 @@ class Market:
     def __init__(self):
         self.buybook = []
         self.sellbook = []
+        self.prebuy = []
+        self.presell = []
 
     def clear_books(self):
         """
-        Reset books to an empty state
+        Reset books to an empty state and copy data for 1 day backup
         """
+        self.prebuy = self.buybook
+        self.presell = self.sellbook
+
         self.sellbook = []
         self.buybook = []
 
