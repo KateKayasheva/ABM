@@ -1,4 +1,5 @@
 import random
+from statistics import mean, stdev
 
 
 class Agent:
@@ -34,6 +35,7 @@ class Agent:
             self.money -= quantity * price
 
 
+
 class RandomTrader(Agent):
     """
     Random trader
@@ -44,13 +46,14 @@ class RandomTrader(Agent):
 
         self.type = "RANDOM"
 
-    def order(self, day):
+    def order(self, day, previous_prices=[]):
         """
         Set the order
         BUY if no stocks on hand
         If stocks > 0 choose direction at random
         order format dictionary as {'direction': direction, 'price': price, 'quantity': quantity, 'agent': id(self)}
         Day - simulation day number
+        previous_prices: list of price for previous day
         """
         # Determine the direction
         if self.stocks > 0:
@@ -59,12 +62,19 @@ class RandomTrader(Agent):
             direction = "BUY"
 
         #  Determine price
-        # TODO: determine the price (add average +- sigma)
 
         if day == 0:
-            price = random.randint(1, self.money*100)/100  # From 0.01 to money
+            price = random.randint(1, self.money * 100) / 100  # From 0.01 to money
+        elif len(previous_prices) >= 2: #to be able to compute sigma and mu
+            # determine the price (add average +- sigma)
+            mu = mean(previous_prices)
+            sd = stdev(previous_prices)
+            print(mu, sd)
+            price = round(random.uniform(mu - sd, mu + sd), 2) # to avoid infinite decimal points
+            print("WWWWWWWWWWWWWWWWWWWWW")
+            print(price)
         else:
-            price = random.randint(1, self.money*100)/100
+            price = random.randint(1, self.money * 100) / 100  # From 0.01 to money
 
         # Determine quantity
         quantity = 0
@@ -75,11 +85,19 @@ class RandomTrader(Agent):
             except ValueError:
                 quantity = 1
         elif direction == "BUY":
-            quantity = random.randint(1, int(self.money / price))  # TODO: find the lower bound (seems fine)
+            try:
+                quantity = random.randint(1, int(self.money / price))  # TODO: find the lower bound (seems fine)
+            except ValueError:
+                quantity = 1
 
         order = {'direction': direction, 'price': price, 'quantity': quantity, 'agent': id(self)}
         print("Printing order from order function:", order)
         return order
 
 
+class MarketMaker(Agent):
 
+    def __init__(self, money, stocks):
+        Agent.__init__(self, money, stocks)
+
+        self.type = "MM"
