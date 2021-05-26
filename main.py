@@ -64,15 +64,31 @@ params = {
     "HFT": []
 }
 
-agents = generate_agents(params, nrt=3)
+agents = generate_agents(params, nrt=10)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
+previous_prices = []
 
 for i in agents:
     print(i)
     print(i.wealth())
-    order = i.order(day=1)
+    order = i.order(day=0)
+    time = datetime.datetime.now().timestamp()  # time in seconds
+    # print("time:", time)
+    # print("\n")
+    market.add_order(order, time)
+
+print(market.sellbook)
+print(market.buybook)
+
+previous_prices = market.match_orders(agents_dict) # match orders and record prices
+market.clear_books()
+
+for i in agents:
+    print(i)
+    print(i.wealth())
+    order = i.order(day=1, previous_prices=previous_prices)
     time = datetime.datetime.now().timestamp()  # time in seconds
     # print("time:", time)
     # print("\n")
@@ -82,6 +98,7 @@ print(market.sellbook)
 print(market.buybook)
 
 market.match_orders(agents_dict)
+market.clear_books()
 
 for i in agents:
     print(i)
