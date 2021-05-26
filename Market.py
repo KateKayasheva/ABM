@@ -38,14 +38,39 @@ class Market:
         if order['direction'] == "SELL":
             self.sellbook.append(
                 [order['price'], time, order['quantity'], order['agent']])
-            self.sellbook.sort(key=lambda x: x[0]) # now sorts on price
+            self.sellbook.sort(key=lambda x: -x[0]) # now sorts on price high to low (-)
         elif order['direction'] == "BUY":
             self.buybook.append(
                 [order['price'], -time, order['quantity'], order['agent']])
-            self.buybook.sort(key=lambda x: x[0])
+            self.buybook.sort(key=lambda x: -x[0])
         else:
             print("Error in add_order: direction is not in correct format:",
                     order['direction'], '-> Order from agent:', order['agent'])
+
+
+    def match_orders(self, agents_dict):
+        """
+        run after orders are added
+
+        agents_dict: dictionary mapping ids of agents with objects
+        :return:
+        """
+        for order_buy in self.buybook:
+            price_buy = order_buy[0]
+            time_buy = order_buy[1]
+            quantity_buy = order_buy[2]
+            agent_buy = agents_dict[order_buy[3]]
+            for order_sell in self.sellbook:
+                price_sell = order_sell[0]
+                time_sell = order_sell[1]
+                quantity_sell = order_sell[2]
+                agent_sell = agents_dict[order_sell[3]]
+                if price_sell <= price_buy:
+                    agent_sell.record(direction="SELL", price = price_sell, quantity=min(quantity_sell, quantity_buy))
+                    agent_buy.record(direction="BUY", price=price_sell, quantity=min(quantity_sell, quantity_buy))
+                    break
+
+
 
 
 # market = Market()
