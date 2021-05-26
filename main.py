@@ -31,7 +31,7 @@ def generate_agents(param, nrt, nmm=0, nhft=0):
     :param nhft: number of high frequency traders
     :return: list of all agents
     """
-    agents = []
+    agents_list = []
 
     rt = param["RANDOM"]
 
@@ -40,7 +40,7 @@ def generate_agents(param, nrt, nmm=0, nhft=0):
         stocks = random.randint(rt[2], rt[3])
         agent = RandomTrader(money, stocks)
 
-        agents.append(agent)
+        agents_list.append(agent)
 
     for i in range(1, nmm):
         pass
@@ -48,7 +48,14 @@ def generate_agents(param, nrt, nmm=0, nhft=0):
     for i in range(1, nhft):
         pass
 
-    return agents
+    return agents_list
+
+
+def agents_dictionary(agents_list):
+    d = {}
+    for a in agents_list:
+        d[id(a)] = a
+    return d
 
 
 params = {
@@ -57,12 +64,14 @@ params = {
     "HFT": []
 }
 
-agents = generate_agents(params, nrt=10)
+agents = generate_agents(params, nrt=3)
+
+agents_dict = agents_dictionary(agents)
 market = Market()
 
 for i in agents:
-    # print(i)
-    # print(i.wealth())
+    print(i)
+    print(i.wealth())
     order = i.order(day=1)
     time = datetime.datetime.now().timestamp()  # time in seconds
     # print("time:", time)
@@ -71,3 +80,9 @@ for i in agents:
 
 print(market.sellbook)
 print(market.buybook)
+
+market.match_orders(agents_dict)
+
+for i in agents:
+    print(i)
+    print(i.wealth())
