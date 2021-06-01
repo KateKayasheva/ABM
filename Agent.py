@@ -35,7 +35,6 @@ class Agent:
             self.money -= quantity * price
 
 
-
 class RandomTrader(Agent):
     """
     Random trader
@@ -66,12 +65,12 @@ class RandomTrader(Agent):
 
         if day == 0:
             price = random.randint(1, self.money * 100) / 100  # From 0.01 to money
-        elif len(previous_prices) >= 2: #to be able to compute sigma and mu
+        elif len(previous_prices) >= 2:  # to be able to compute sigma and mu
             # determine the price (add average +- sigma)
             mu = mean(previous_prices)
             sd = stdev(previous_prices)
             print(mu, sd)
-            price = round(random.uniform(mu - sd, mu + sd), 2) # to avoid infinite decimal points
+            price = round(random.uniform(mu - sd, mu + sd), 2)  # to avoid infinite decimal points
             print("WWWWWWWWWWWWWWWWWWWWW")
             print(price)
         else:
@@ -103,5 +102,9 @@ class MarketMaker(Agent):
 
         self.type = "MM"
 
-    def order (self, day, previous_prices=[]):
-        pass
+    def order(self, day, market):
+        if day == 0:
+            return None
+
+        prebuyprices = [x[0] for x in market.prebuy].sorted()
+        presellprices = [x[0] for x in market.presell].sorted()
