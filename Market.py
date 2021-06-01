@@ -8,6 +8,7 @@ class Market:
         self.sellbook = []
         self.prebuy = []
         self.presell = []
+        self.preprices = []
 
     def clear_books(self):
         """
@@ -18,6 +19,7 @@ class Market:
 
         self.sellbook = []
         self.buybook = []
+
 
     def add_order(self, order, time):
         """
@@ -75,7 +77,7 @@ class Market:
                     break
 
 
-        return prices
+        self.preprices = prices
 
 
 # market = Market()
@@ -83,4 +85,4 @@ class Market:
 # market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 4, 'agent': 2}, 2)
 # market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 1, 'agent': 3}, 1)
 # print(market.sellbook)
-# print(market.buybook)
+# print(market.preprices)

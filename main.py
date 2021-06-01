@@ -68,12 +68,11 @@ agents = generate_agents(params, nrt=10)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
-previous_prices = []
 
 for i in agents:
-    print(i)
-    print(i.wealth())
-    order = i.order(day=0)
+    # print(i)
+    # print(i.wealth())
+    order = i.order(day=0, market=market)
     time = datetime.datetime.now().timestamp()  # time in seconds
     # print("time:", time)
     # print("\n")
@@ -82,13 +81,15 @@ for i in agents:
 print(market.sellbook)
 print(market.buybook)
 
-previous_prices = market.match_orders(agents_dict) # match orders and record prices
+market.match_orders(agents_dict)  # match orders and record preprices
 market.clear_books()
 
+
 for i in agents:
-    print(i)
-    print(i.wealth())
-    order = i.order(day=1, previous_prices=previous_prices)
+    # print(i)
+    # print(i.wealth())
+
+    order = i.order(day=1, market=market)
     time = datetime.datetime.now().timestamp()  # time in seconds
     # print("time:", time)
     # print("\n")
@@ -100,6 +101,6 @@ print(market.buybook)
 market.match_orders(agents_dict)
 market.clear_books()
 
-for i in agents:
-    print(i)
-    print(i.wealth())
+# for i in agents:
+#     print(i)
+#     print(i.wealth())

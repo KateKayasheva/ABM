@@ -46,7 +46,7 @@ class RandomTrader(Agent):
 
         self.type = "RANDOM"
 
-    def order(self, day, previous_prices=[]):
+    def order(self, day, market):
         """
         Set the order
         BUY if no stocks on hand
@@ -62,6 +62,7 @@ class RandomTrader(Agent):
             direction = "BUY"
 
         #  Determine price
+        previous_prices = market.preprices
 
         if day == 0:
             price = random.randint(1, self.money * 100) / 100  # From 0.01 to money
@@ -101,3 +102,6 @@ class MarketMaker(Agent):
         Agent.__init__(self, money, stocks)
 
         self.type = "MM"
+
+    def order (self, day, previous_prices=[]):
+        pass
