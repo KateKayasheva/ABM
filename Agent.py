@@ -87,6 +87,9 @@ class RandomTrader(Agent):
         elif direction == "BUY":
             try:
                 # TODO: possible error since the should not be an int
+                maxq = self.money/price
+                minq = 1  # will set to tick size
+
                 quantity = random.randint(1, int(self.money / price))
             except ValueError:
                 quantity = 1

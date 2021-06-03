@@ -58,29 +58,43 @@ class Market:
     def match_orders(self, agents_dict):
         """
         run after orders are added
-        Go through buybook if price in sellbook is not higher - match
+        Go through buybook if prices are equal try to match
 
         agents_dict: dictionary mapping ids of agents with objects
         :return:
         """
         prices = []
+
+        # TODO: at what price to match (p = p)
+
         for order_buy in self.buybook:
             price_buy = order_buy[0]
             time_buy = order_buy[1]
             quantity_buy = order_buy[2]
             agent_buy = agents_dict[order_buy[3]]
+
+            remaining_stocks = quantity_buy
             for order_sell in self.sellbook:
                 price_sell = order_sell[0]
                 time_sell = order_sell[1]
                 quantity_sell = order_sell[2]
                 agent_sell = agents_dict[order_sell[3]]
-                if price_sell <= price_buy:
-                    # TODO: at what price to match
-                    agent_sell.record(direction="SELL", price=price_sell, quantity=min(quantity_sell, quantity_buy))
-                    agent_buy.record(direction="BUY", price=price_sell, quantity=min(quantity_sell, quantity_buy))
-                    prices.append(price_sell)
-                    # print("DEAL")
-                    break
+
+                if price_sell == price_buy:
+                    remaining_stocks = remaining_stocks - quantity_sell
+                    if remaining_stocks <= 0:
+                        quantity = remaining_stocks
+                        agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                        agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                        prices.append(price_sell)
+                        print("DEAL")
+                        break
+                    elif remaining_stocks > 0:
+                        quantity = quantity_sell
+                        agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                        agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                        prices.append(price_sell)
+                        print("DEAL")
 
 
         self.preprices = prices
