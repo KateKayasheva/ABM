@@ -30,9 +30,14 @@ class Market:
         :param time: time at which the order gets to the market
         :return:
         """
+        # skipping None orders
+        if order == None:
+            return None
+
         # Allow only one order per agent
         for book in (self.sellbook, self.buybook):
             for line in book:
+
                 if order['agent'] == line[3]:
                     book.remove(line)
                     break
@@ -74,6 +79,7 @@ class Market:
                     agent_sell.record(direction="SELL", price=price_sell, quantity=min(quantity_sell, quantity_buy))
                     agent_buy.record(direction="BUY", price=price_sell, quantity=min(quantity_sell, quantity_buy))
                     prices.append(price_sell)
+                    # print("DEAL")
                     break
 
 

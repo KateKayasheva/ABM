@@ -1,6 +1,6 @@
 # This is a sample Python script.
 
-from Agent import RandomTrader
+from Agent import RandomTrader, MarketMaker
 from Market import Market
 import random
 import datetime
@@ -43,7 +43,11 @@ def generate_agents(param, nrt, nmm=0, nhft=0):
         agents_list.append(agent)
 
     for i in range(1, nmm):
-        pass
+        money = random.randint(rt[0], rt[1])
+        stocks = random.randint(rt[2], rt[3])
+        agent = MarketMaker(money, stocks)
+
+        agents_list.append(agent)
 
     for i in range(1, nhft):
         pass
@@ -60,47 +64,35 @@ def agents_dictionary(agents_list):
 
 params = {
     "RANDOM": [100, 1000, 0, 10],  # min money, max money, min stocks, max stocks
-    "MM": [],
+    "MM": [300, 2000, 0, 20],  # made them richer
     "HFT": []
 }
 
-agents = generate_agents(params, nrt=10)
+agents = generate_agents(params, nrt=30, nmm=50)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
 
-for i in agents:
-    # print(i)
-    # print(i.wealth())
-    order = i.order(day=0, market=market)
-    time = datetime.datetime.now().timestamp()  # time in seconds
-    # print("time:", time)
-    # print("\n")
-    market.add_order(order, time)
+print("SELL:", market.sellbook)
+print("BUY:", market.buybook)
 
-print(market.sellbook)
-print(market.buybook)
+for day in range(0, 5):
+    for i in agents:
+        # print(i)
+        # print(i.wealth())
 
-market.match_orders(agents_dict)  # match orders and record preprices
-market.clear_books()
+        order = i.order(day=day, market=market)
+        time = datetime.datetime.now().timestamp()  # time in seconds
+        # print("time:", time)
+        # print("\n")
+        market.add_order(order, time)
 
+    print("SELL:", market.sellbook)
+    print("BUY:", market.buybook)
 
-for i in agents:
-    # print(i)
-    # print(i.wealth())
+    market.match_orders(agents_dict)
+    market.clear_books()
 
-    order = i.order(day=1, market=market)
-    time = datetime.datetime.now().timestamp()  # time in seconds
-    # print("time:", time)
-    # print("\n")
-    market.add_order(order, time)
-
-print(market.sellbook)
-print(market.buybook)
-
-market.match_orders(agents_dict)
-market.clear_books()
-
-# for i in agents:
-#     print(i)
-#     print(i.wealth())
+    # for i in agents:
+    #     print(i)
+    #     print(i.wealth())
