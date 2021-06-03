@@ -166,4 +166,17 @@ class MarketMaker(Agent):
         # print("Printing order from order function:", order, "type: MM")
         return order
 
+class HFT(Agent):
 
+    def __init__(self, money, stocks):
+        Agent.__init__(self, money, stocks)
+
+        self.type = "HFT"
+
+    def order(self, day, market):
+        if day == 0:
+            """
+            in our model MM will not act on the first day
+            Orders with None are skipped when adding to sell/buy book
+            """
+            return None
