@@ -92,7 +92,7 @@ class RandomTrader(Agent):
                 quantity = 1
 
         order = {'direction': direction, 'price': price, 'quantity': quantity, 'agent': id(self)}
-        print("Printing order from order function:", order, "type: RANDOM")
+        # print("Printing order from order function:", order, "type: RANDOM")
         return order
 
 
@@ -104,16 +104,19 @@ class MarketMaker(Agent):
         self.type = "MM"
 
     def order(self, day, market):
+
         if day == 0:
             """
             in our model MM will not act on the first day
             Orders with None are skipped when adding to sell/buy book
             """
             return None
-        if len(market.prebuy) or len(market.presell) < 2:
+        # print("MM", market.prebuy, market.presell)
+        if len(market.prebuy) < 2 or len(market.presell) < 2:
             """
             Not able to calculate sigma 
             """
+            # print(len(market.prebuy), len(market.presell))
             return None
 
         # Determine prices
@@ -124,7 +127,7 @@ class MarketMaker(Agent):
         sigma_buy = stdev(prebuyprices)
         sigma_sell = stdev(presellprices)
         pricebuy = presellprices[0] - sigma_sell
-        pricesell = prebuyprices[len(prebuyprices)] - sigma_buy
+        pricesell = prebuyprices[len(prebuyprices)-1] - sigma_buy
 
         # Determine the direction
         if self.stocks > 0:
@@ -152,5 +155,5 @@ class MarketMaker(Agent):
                 quantity = 1
 
         order = {'direction': direction, 'price': price, 'quantity': quantity, 'agent': id(self)}
-        print("Printing order from order function:", order, "type: MM")
+        # print("Printing order from order function:", order, "type: MM")
         return order
