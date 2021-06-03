@@ -68,7 +68,7 @@ params = {
     "HFT": []
 }
 
-agents = generate_agents(params, nrt=100, nmm=50)
+agents = generate_agents(params, nrt=100, nmm=100)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
@@ -76,7 +76,7 @@ market = Market()
 print("SELL:", market.sellbook)
 print("BUY:", market.buybook)
 
-for day in range(0, 40):
+for day in range(0, 50):
     for i in agents:
         # print(i)
         # print(i.wealth())
@@ -89,6 +89,7 @@ for day in range(0, 40):
 
     print("SELL:", market.sellbook)
     print("BUY:", market.buybook)
+    print(market.preprices)
 
     market.match_orders(agents_dict)
     market.clear_books()

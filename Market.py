@@ -87,14 +87,14 @@ class Market:
                         agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
                         agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
                         prices.append(price_sell)
-                        print("DEAL")
+                        # print("DEAL")
                         break
                     elif remaining_stocks > 0:
                         quantity = quantity_sell
                         agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
                         agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
                         prices.append(price_sell)
-                        print("DEAL")
+                        # print("DEAL")
 
 
         self.preprices = prices

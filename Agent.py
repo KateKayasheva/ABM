@@ -1,6 +1,10 @@
 import random
 from statistics import mean, stdev
 
+# Round parameter for prices
+
+r = 0
+
 
 class Agent:
     """
@@ -63,18 +67,22 @@ class RandomTrader(Agent):
         #  Determine price
         previous_prices = market.preprices
 
-        if day == 0:
-            price = random.uniform(0.01, self.money) # From 0.01 to money
-        elif len(previous_prices) >= 2:  # to be able to compute sigma and mu
-            # determine the price (add average +- sigma)
-            mu = mean(previous_prices)
-            sd = stdev(previous_prices)
-            print(mu, sd)
-            price = round(random.uniform(mu - sd, mu + sd), 2)  # to avoid infinite decimal points
-            print("WWWWWWWWWWWWWWWWWWWWW")
-            print(price)
-        else:
-            price = random.uniform(0.01, self.money)  # From 0.01 to money
+        price = 0
+
+        while price == 0:  # try finding price
+            if day == 0:
+                price = round(random.uniform(1.01, self.money), r)  # From 0.01 to money
+            elif len(previous_prices) >= 2:  # to be able to compute sigma and mu
+                # determine the price (add average +- sigma)
+                mu = mean(previous_prices)
+                sd = stdev(previous_prices)
+                # TODO: Can be negative prices when mu < sd
+                # print(mu, sd)
+                price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
+                # print("WWWWWWWWWWWWWWWWWWWWW")
+                # print(price)
+            else:
+                price = round(random.uniform(1.01, self.money), r)  # From 0.01 to money
 
         # Determine quantity
         quantity = 0
@@ -86,9 +94,6 @@ class RandomTrader(Agent):
                 quantity = 1
         elif direction == "BUY":
             try:
-                # TODO: possible error since the should not be an int
-                maxq = self.money/price
-                minq = 1  # will set to tick size
 
                 quantity = random.randint(1, int(self.money / price))
             except ValueError:
@@ -129,8 +134,8 @@ class MarketMaker(Agent):
         presellprices.sort()
         sigma_buy = stdev(prebuyprices)
         sigma_sell = stdev(presellprices)
-        pricebuy = presellprices[0] - sigma_sell
-        pricesell = prebuyprices[len(prebuyprices)-1] - sigma_buy
+        pricebuy = round(presellprices[0] - sigma_sell, r)
+        pricesell = round(prebuyprices[len(prebuyprices) - 1] - sigma_buy, r)
 
         # Determine the direction
         if self.stocks > 0:
@@ -151,7 +156,7 @@ class MarketMaker(Agent):
         elif direction == "BUY":
             price = pricebuy
             try:
-                # TODO: possible error since the should not be an int
+
                 quantity = random.randint(1, int(self.money / price))
             except ValueError:
 
@@ -160,3 +165,5 @@ class MarketMaker(Agent):
         order = {'direction': direction, 'price': price, 'quantity': quantity, 'agent': id(self)}
         # print("Printing order from order function:", order, "type: MM")
         return order
+
+
