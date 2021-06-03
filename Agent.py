@@ -64,17 +64,17 @@ class RandomTrader(Agent):
         previous_prices = market.preprices
 
         if day == 0:
-            price = random.randint(1, self.money * 100) / 100  # From 0.01 to money
+            price = random.uniform(0.01, self.money) # From 0.01 to money
         elif len(previous_prices) >= 2:  # to be able to compute sigma and mu
             # determine the price (add average +- sigma)
             mu = mean(previous_prices)
             sd = stdev(previous_prices)
-            # print(mu, sd)
+            print(mu, sd)
             price = round(random.uniform(mu - sd, mu + sd), 2)  # to avoid infinite decimal points
-            # print("WWWWWWWWWWWWWWWWWWWWW")
-            # print(price)
+            print("WWWWWWWWWWWWWWWWWWWWW")
+            print(price)
         else:
-            price = random.randint(1, self.money * 100) / 100  # From 0.01 to money
+            price = random.uniform(0.01, self.money)  # From 0.01 to money
 
         # Determine quantity
         quantity = 0
