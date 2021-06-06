@@ -176,6 +176,28 @@ class Market:
 
                                     print("DEAL2", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
 
+                            elif price_sell < price_buy:
+
+                                if quantity_buy <= quantity_sell:
+                                    quantity = quantity_buy
+                                    agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                                    agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                                    prices.append(price_sell)
+
+                                    remaining_stocks = 0
+                                    Q_mod = quantity
+                                    print("DEAL3", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+
+                                elif quantity_buy > quantity_sell:
+                                    quantity = quantity_sell
+                                    agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                                    agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                                    prices.append(price_sell)
+                                    remaining_stocks = remaining_stocks - quantity_sell
+                                    Q_mod = quantity
+                                    print('DEAL4', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+
+
                         elif order_type_sell == 'M':
                             # print('in M11')
 
@@ -186,7 +208,7 @@ class Market:
                                 agent_buy.record(direction="BUY", price=price_buy, quantity=quantity)
                                 prices.append(price_buy)
                                 remaining_stocks = 0
-                                print("DEAL3", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+                                print("DEAL5", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
                                 Q_mod = quantity
 
                             elif quantity_buy > quantity_sell:
@@ -196,7 +218,7 @@ class Market:
                                 agent_buy.record(direction="BUY", price=price_buy, quantity=quantity)
                                 prices.append(price_buy)
                                 remaining_stocks = remaining_stocks - quantity_sell
-                                print('DEAL4', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+                                print('DEAL6', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
                                 Q_mod = quantity
                         else:
                             print(order_type_buy, order_type_sell, 'skipped L1')
@@ -213,7 +235,7 @@ class Market:
                             agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
                             prices.append(price_sell)
                             remaining_stocks = 0
-                            print("DEAL5", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+                            print("DEAL7", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
                             Q_mod = quantity
 
                         elif quantity_buy > quantity_sell:
@@ -222,7 +244,7 @@ class Market:
                             agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
                             prices.append(price_sell)
                             remaining_stocks = remaining_stocks - quantity_sell
-                            print("DEAL6", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+                            print("DEAL8", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
                             Q_mod = quantity
                         else:
                             print('skipped m2')
