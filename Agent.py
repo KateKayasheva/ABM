@@ -90,10 +90,10 @@ class RandomTrader(Agent):
                     mu = mean(previous_prices)
                     sd = stdev(previous_prices)
                     # TODO: Can be negative prices when mu < sd
-                    print(mu, sd)
+                    # print(mu, sd)
                     price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
-                    print("WWWWWWWWWWWWWWWWWWWWW")
-                    print(price)
+                    # print("WWWWWWWWWWWWWWWWWWWWW")
+                    # print(price)
                 else:
                     price = round(random.uniform(1.01, self.money), r)  # From 0.01 to money
 

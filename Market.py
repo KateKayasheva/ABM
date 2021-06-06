@@ -35,7 +35,7 @@ class Market:
         :return:
         """
         # skipping None orders
-        if order == None:
+        if order is None:
             return None
 
         # Allow only one order per agent
@@ -81,8 +81,11 @@ class Market:
             remaining_stocks = quantity_buy
             len_sellbook = len(self.sellbook)
             i = 0
-            while remaining_stocks > 0 and i < len_sellbook:
-                for order_sell in self.sellbook:
+
+
+            for order_sell in self.sellbook:
+                while remaining_stocks > 0 and i <= len_sellbook:
+                    print('first87', remaining_stocks)
                     i += 1
                     price_sell = order_sell[0]
                     time_sell = order_sell[1]
@@ -91,69 +94,80 @@ class Market:
                     order_type_sell = order_sell[4]
                     print('SELL ORDER:', order_sell)
 
-                # TODO: need to modify the sell/buy book after matching the order
-                if order_type_buy == 'L':
-                    """
-                    For now limit orders only match at equal price and also matched with market orders on the sell side
-                    """
-                    if order_type_sell == 'L':
-                        if price_sell == price_buy:
+                    # TODO: need to modify the sell/buy book after matching the order (deleting quantities sold)
+                    if order_type_buy == 'L':
+                        # print('in l1')
+                        """
+                        For now limit orders only match at equal price and also matched with market orders on the sell side
+                        """
+                        if order_type_sell == 'L':
+                            # print('in l12')
+                            if price_sell == price_buy:
+
+                                if quantity_buy <= quantity_sell:
+                                    quantity = quantity_buy
+                                    agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                                    agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                                    prices.append(price_sell)
+                                    print("DEAL1", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+                                    remaining_stocks = 0
+
+                                elif quantity_buy > quantity_sell:
+                                    quantity = quantity_sell
+                                    agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                                    agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                                    prices.append(price_sell)
+                                    remaining_stocks = remaining_stocks - quantity_sell
+
+                                    print("DEAL2", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+
+                        elif order_type_sell == 'M':
+                            # print('in M11')
 
                             if quantity_buy <= quantity_sell:
+                                # print('in d3')
                                 quantity = quantity_buy
-                                agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
-                                agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
-                                prices.append(price_sell)
-                                print("DEAL")
+                                agent_sell.record(direction="SELL", price=price_buy, quantity=quantity)
+                                agent_buy.record(direction="BUY", price=price_buy, quantity=quantity)
+                                prices.append(price_buy)
                                 remaining_stocks = 0
+                                print("DEAL3", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
 
                             elif quantity_buy > quantity_sell:
+                                # print('in d4')
                                 quantity = quantity_sell
-                                agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
-                                agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
-                                prices.append(price_sell)
+                                agent_sell.record(direction="SELL", price=price_buy, quantity=quantity)
+                                agent_buy.record(direction="BUY", price=price_buy, quantity=quantity)
+                                prices.append(price_buy)
                                 remaining_stocks = remaining_stocks - quantity_sell
+                                print('DEAL4', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+                        else:
+                            print(order_type_buy, order_type_sell, 'skipped L1')
 
-                                print("DEAL")
-
-                    if order_type_sell == 'M':
+                    elif order_type_buy == 'M':
+                        # print('in m2')
+                        """
+                        For market orders any sell order is applicable
+                        """
 
                         if quantity_buy <= quantity_sell:
                             quantity = quantity_buy
-                            agent_sell.record(direction="SELL", price=price_buy, quantity=quantity)
-                            agent_buy.record(direction="BUY", price=price_buy, quantity=quantity)
-                            prices.append(price_buy)
+                            agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                            agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                            prices.append(price_sell)
                             remaining_stocks = 0
-                            print("DEAL")
-                            break
+                            print("DEAL5", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+
                         elif quantity_buy > quantity_sell:
                             quantity = quantity_sell
-                            agent_sell.record(direction="SELL", price=price_buy, quantity=quantity)
-                            agent_buy.record(direction="BUY", price=price_buy, quantity=quantity)
-                            prices.append(price_buy)
+                            agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                            agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                            prices.append(price_sell)
                             remaining_stocks = remaining_stocks - quantity_sell
-
-                if order_type_buy == 'M':
-                    """
-                    For market orders any sell order is applicable
-                    """
-
-                    if quantity_buy <= quantity_sell:
-                        quantity = quantity_buy
-                        agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
-                        agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
-                        prices.append(price_sell)
-                        remaining_stocks = 0
-                        print("DEAL")
-                        break
-                    elif quantity_buy > quantity_sell:
-                        quantity = quantity_sell
-                        agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
-                        agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
-                        prices.append(price_sell)
-                        remaining_stocks = remaining_stocks - quantity_sell
-                        print("DEAL")
-
+                            print("DEAL6", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+                    else:
+                        print('skipped everything', order_type_buy, order_type_sell)
+                    print(remaining_stocks)
         self.preprices = prices
 
 # market = Market()
