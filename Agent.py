@@ -65,13 +65,13 @@ class RandomTrader(Agent):
         """
         # Determine the direction
         if self.stocks > 0:
-            direction = random.choice(("BUY", "SELL"))
+            direction = random.choices(population=("BUY", "SELL"), weights=[0.5, 0.5], k=1)[0]
         else:
             direction = "BUY"
 
         # determine type of the order
 
-        order_type = random.choice(('L', 'M'))
+        order_type = random.choices(population=("L", "M"), weights=[0.65, 0.35], k=1)[0]
 
         #  Determine price
         previous_prices = market.preprices

@@ -117,7 +117,7 @@ class Market:
             buy_id = order_buy[3]
             agent_buy = agents_dict[buy_id]
             order_type_buy = order_buy[4]
-            agent_buy_money = agent_buy.money
+
             print('BUY ORDER:', order_buy)
 
             len_sellbook = len(self.sellbook)
@@ -225,13 +225,13 @@ class Market:
                         print(order_type_buy, order_type_sell, 'skipped L1')
 
                 elif order_type_buy == 'M':
-
+                    print(agent_buy.money)
                     if order_type_sell == 'L':
                         print('in m2')
                         """
                         For market orders any sell order is applicable
                         """
-                        if agent_buy_money >= price_sell * quantity_sell:
+                        if agent_buy.money >= price_sell * quantity_sell:
                             quantity = quantity_sell
                             agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
                             agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
@@ -240,8 +240,8 @@ class Market:
                             Q_mod = quantity
                             print('DEAL7', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
 
-                        elif agent_buy_money <= price_sell * quantity_sell:
-                            quantity = int(agent_buy_money / price_sell)
+                        elif agent_buy.money <= price_sell * quantity_sell:
+                            quantity = int(agent_buy.money / price_sell)
                             if quantity > 0:
                                 agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
                                 agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
