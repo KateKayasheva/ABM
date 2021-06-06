@@ -94,6 +94,8 @@ for day in range(0, 20):
     print('PRICES DAY BEFORE:', market.preprices)
 
     market.match_orders(agents_dict)
+    print("BUY:", market.buybook)
+    print("SELL:", market.sellbook)
     market.clear_books()
     print('--------------------------------------------')
 

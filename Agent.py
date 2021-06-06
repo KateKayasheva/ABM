@@ -18,6 +18,7 @@ class Agent:
         self.stocks = stocks
         self.type = None
 
+
     def wealth(self):
         return "Agent owns {} stocks and {} of money".format(self.stocks, self.money)
 
@@ -91,11 +92,15 @@ class RandomTrader(Agent):
                     sd = stdev(previous_prices)
                     # TODO: Can be negative prices when mu < sd
                     # print(mu, sd)
-                    price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
+                    if mu > sd:
+                        price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
+                    else:
+                        price = round(random.uniform(1.01, mu + sd), r)
+
                     # print("WWWWWWWWWWWWWWWWWWWWW")
                     # print(price)
                 else:
-                    price = round(random.uniform(1.01, self.money), r)  # From 0.01 to money
+                    price = round(random.uniform(1.01, self.money), r)  # From 1.01 to money
 
                 # Determine quantity for limit order
                 quantity = 0
@@ -142,9 +147,12 @@ class RandomTrader(Agent):
 
             elif direction == "BUY":
                 # TODO: how to determine quantity for market orders BUY, money can possibly go below zero
-                quantity = 0
-                order = None
-                return order
+                """
+                Will assume for know that the agent is willing to spend everything on the BUY market order
+                (can set this parameter later)
+                """
+                quantity = None
+                return None
 
         else:
             print('Type of the order is invalid')
@@ -167,7 +175,8 @@ class MarketMaker(Agent):
 
     def order(self, day, market):
         """
-
+        Market makers assumed to submit only limit orders.
+        Can place two orders on the same day: 1 SELL, 1 BUY
         :param day: day number of simulation
         :param market: Market from Market.py to access values
         :return: list of orders for the market maker (will need to itterate over it later
