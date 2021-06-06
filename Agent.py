@@ -104,13 +104,21 @@ class RandomTrader(Agent):
                     try:
                         quantity = random.randint(1, maxq)
                     except ValueError:
-                        quantity = 1
+                        if maxq == 1:
+                            quantity = 1
+                        else:
+                            order = None
+                            return order
                 elif direction == "BUY":
                     try:
 
                         quantity = random.randint(1, int(self.money / price))
                     except ValueError:
-                        quantity = 1
+                        if int(self.money / price) == 1:
+                            quantity = 1
+                        else:
+                            order = None
+                            return order
 
 
         elif order_type == 'M':
@@ -126,7 +134,11 @@ class RandomTrader(Agent):
                 try:
                     quantity = random.randint(1, maxq)
                 except ValueError:
-                    quantity = 1
+                    if maxq == 1:
+                        quantity = 1
+                    else:
+                        order = None
+                        return order
 
             elif direction == "BUY":
                 # TODO: how to determine quantity for market orders BUY, money can possibly go below zero
@@ -234,7 +246,7 @@ class MarketMaker(Agent):
                      'order_type': order_type}
             # print("Printing order from order function:", order, "type: MM")
             orders.append(order)
-        print('MM: ', orders)
+        # print('MM: ', orders)
         return orders
 
 

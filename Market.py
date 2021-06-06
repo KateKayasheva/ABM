@@ -119,17 +119,17 @@ class Market:
             order_type_buy = order_buy[4]
             print('BUY ORDER:', order_buy)
 
-            remaining_stocks = quantity_buy
+
             len_sellbook = len(self.sellbook)
             if len_sellbook == 0:
                 break
             i = 0
 
             sell = self.sellbook.copy()
+            remaining_stocks = quantity_buy
+            for order_sell in sell:
+                while remaining_stocks > 0 and i <= len_sellbook:
 
-            while remaining_stocks > 0 and i <= len_sellbook:
-
-                for order_sell in sell:
                     # print('first87', remaining_stocks)
                     i += 1
                     price_sell = order_sell[0]
@@ -177,7 +177,7 @@ class Market:
                                     print("DEAL2", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
 
                             elif price_sell < price_buy:
-
+                                # TODO: quantity should be adjusted since the price is changed
                                 if quantity_buy <= quantity_sell:
                                     quantity = quantity_buy
                                     agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
@@ -202,6 +202,7 @@ class Market:
                             # print('in M11')
 
                             if quantity_buy <= quantity_sell:
+
                                 # print('in d3')
                                 quantity = quantity_buy
                                 agent_sell.record(direction="SELL", price=price_buy, quantity=quantity)
@@ -251,7 +252,7 @@ class Market:
                     else:
                         print('skipped everything: order_type is not in correct format',
                               order_type_buy, order_type_sell)
-                    # print(remaining_stocks)
+                    print(remaining_stocks)
                     print(Q_mod)
 
                     """
@@ -261,10 +262,11 @@ class Market:
                     if Q_mod != '*':
                         self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
                     self.remove_zero_q_orders()
-                    print(self.buybook)
-                    print(self.sellbook)
+                    # print(self.buybook)
+                    # print(self.sellbook)
 
         self.preprices = prices
+
 
 # market = Market()
 # market.add_order({'direction': 'SELL', 'quantity': 2, 'price': 3, 'agent': 1}, 1)
