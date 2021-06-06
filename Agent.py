@@ -152,7 +152,7 @@ class RandomTrader(Agent):
                 (can set this parameter later)
                 """
                 quantity = None
-                return None
+
 
         else:
             print('Type of the order is invalid')

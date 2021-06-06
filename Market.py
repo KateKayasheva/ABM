@@ -157,7 +157,7 @@ class Market:
                         print('in l12')
                         if price_sell == price_buy:
 
-                            if remaining_stocks<= quantity_sell:
+                            if remaining_stocks <= quantity_sell:
                                 quantity = quantity_buy
                                 agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
                                 agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
@@ -201,7 +201,7 @@ class Market:
                     elif order_type_sell == 'M':
                         print('in M11')
 
-                        if remaining_stocks<= quantity_sell:
+                        if remaining_stocks <= quantity_sell:
 
                             print('in d3')
                             quantity = quantity_buy
@@ -212,7 +212,7 @@ class Market:
                             print("DEAL5", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
                             Q_mod = quantity
 
-                        elif remaining_stocks> quantity_sell:
+                        elif remaining_stocks > quantity_sell:
                             print('in d4')
                             quantity = quantity_sell
                             agent_sell.record(direction="SELL", price=price_buy, quantity=quantity)
@@ -225,28 +225,40 @@ class Market:
                         print(order_type_buy, order_type_sell, 'skipped L1')
 
                 elif order_type_buy == 'M':
-                    print('in m2')
-                    """
-                    For market orders any sell order is applicable
-                    """
-                    if agent_buy_money > price_sell * quantity_sell:
-                        quantity = quantity_sell
-                        agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
-                        agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
-                        prices.append(price_sell)
-                        remaining_stocks = remaining_stocks - quantity
-                        Q_mod = quantity
-                        print('DEAL7', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
 
+                    if order_type_sell == 'L':
+                        print('in m2')
+                        """
+                        For market orders any sell order is applicable
+                        """
+                        if agent_buy_money >= price_sell * quantity_sell:
+                            quantity = quantity_sell
+                            agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                            agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                            prices.append(price_sell)
 
+                            Q_mod = quantity
+                            print('DEAL7', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+
+                        elif agent_buy_money <= price_sell * quantity_sell:
+                            quantity = int(agent_buy_money / price_sell)
+                            if quantity > 0:
+                                agent_sell.record(direction="SELL", price=price_sell, quantity=quantity)
+                                agent_buy.record(direction="BUY", price=price_sell, quantity=quantity)
+                                prices.append(price_sell)
+                                Q_mod = quantity
+                                print('DEAL8', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell))
+
+                    elif order_type_sell == 'M':
+                        pass
 
                     else:
                         print('skipped m2')
                 else:
                     print('skipped everything: order_type is not in correct format',
                           order_type_buy, order_type_sell)
-                print(remaining_stocks)
-                print(Q_mod)
+                print('REMAINS TO BUY', remaining_stocks)
+                # print(Q_mod)
 
                 """
                 Modifying sellers quantity to avoid double selling
