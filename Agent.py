@@ -18,7 +18,6 @@ class Agent:
         self.stocks = stocks
         self.type = None
 
-
     def wealth(self):
         return "Agent owns {} stocks and {} of money".format(self.stocks, self.money)
 
@@ -198,7 +197,7 @@ class MarketMaker(Agent):
             # print(len(market.prebuy), len(market.presell))
             return None
 
-        order_type = 'L'  # TODO: will set to limit orders for now, fact check later
+        order_type = 'L'
 
         # Determine prices
 
@@ -208,10 +207,10 @@ class MarketMaker(Agent):
         sigma_sell = stdev(presellprices)
         pricebuy = round(presellprices[0] - sigma_sell, r)
         pricesell = round(prebuyprices[len(prebuyprices) - 1] + sigma_buy, r)
-        print(sigma_sell, sigma_buy, presellprices[0], prebuyprices[len(prebuyprices) - 1])
+        # print(sigma_sell, sigma_buy, presellprices[0], prebuyprices[len(prebuyprices) - 1])
 
         # Determine the direction
-        # TODO: Should have two orders at the same time. BUY + SELL
+
         # if self.stocks > 0:
         #     direction = random.choice(("BUY", "SELL"))
         # else:
@@ -267,9 +266,49 @@ class HFT(Agent):
         self.type = "HFT"
 
     def order(self, day, market):
+        """
+                   HFT place limit orders on both sides of the book
+                   Wish to maintain net inventory close to zero
+                   Have lower limit (LL) and upper limit (UL) for the inventory
+                   """
         if day == 0:
-            """
-            in our model MM will not act on the first day
-            Orders with None are skipped when adding to sell/buy book
-            """
             return None
+
+        UL = 5
+        LL = 0
+        order_type = 'L'
+        inventory = self.stocks
+
+        # Determine prices
+        prebuyprices = list(filter(None, [x[0] for x in market.prebuy]))  # Do not include market orders
+        presellprices = list(filter(None, [x[0] for x in market.presell]))
+
+        prebuyprices.sort()
+        presellprices.sort()
+        best_buy = round(presellprices[0], r)
+        best_sell = round(prebuyprices[len(prebuyprices) - 1], r)
+
+        sigma = -(((best_sell - best_buy) - 1) * inventory / UL)
+
+        orders = []
+        for direction in ("BUY", "SELL"):
+            quantity = 0
+            if direction == "SELL":
+                quantity = max(0, UL - 1 - inventory)
+                price = best_sell + sigma
+
+            elif direction == "BUY":
+                quantity = max(0, inventory - LL - 1)
+                price = best_buy + sigma
+            else:
+                print('Direction is not specified for the market maker:', id(self))
+
+            order = {'direction': direction,
+                     'price': price,
+                     'quantity': quantity,
+                     'agent': id(self),
+                     'order_type': order_type}
+            # print("Printing order from order function:", order, "type: MM")
+            orders.append(order)
+        # print('MM: ', orders)
+        return orders
