@@ -121,9 +121,12 @@ class Market:
 
             remaining_stocks = quantity_buy
             len_sellbook = len(self.sellbook)
+            if len_sellbook == 0:
+                break
             i = 0
 
             sell = self.sellbook.copy()
+
             while remaining_stocks > 0 and i <= len_sellbook:
 
                 for order_sell in sell:

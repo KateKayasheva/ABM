@@ -234,7 +234,7 @@ class MarketMaker(Agent):
                      'order_type': order_type}
             # print("Printing order from order function:", order, "type: MM")
             orders.append(order)
-
+        print('MM: ', orders)
         return orders
 
 

@@ -5,18 +5,6 @@ from Market import Market
 import random
 import datetime
 
-
-# class Engine():
-#
-#     def __init__(self):
-#         pass
-#
-#     def __str__(self):
-#         return "%s engine %s" % (self.__class__, id(self))
-#
-#     def run(self, agents, market):
-#         pass
-
 def generate_agents(param, nrt, nmm=0, nhft=0):
     """
 
@@ -68,7 +56,7 @@ params = {
     "HFT": []
 }
 
-agents = generate_agents(params, nrt=50, nmm=50)
+agents = generate_agents(params, nrt=2, nmm=3)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
