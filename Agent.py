@@ -64,18 +64,24 @@ class RandomTrader(Agent):
         previous_prices: list of price for previous day
         """
         # Determine the direction
-        if self.stocks > 0:
+        if self.stocks > 0 and self.money > 0:
             direction = random.choices(population=("BUY", "SELL"), weights=[0.5, 0.5], k=1)[0]
-        else:
+        elif self.stocks == 0 and self.money > 0:
             direction = "BUY"
+        elif self.money == 0 and self.stocks > 0:
+            direction = "SELL"
+        else:
+            return None
 
         # determine type of the order
 
         order_type = random.choices(population=("L", "M"), weights=[0.65, 0.35], k=1)[0]
+        # print(order_type)
+        # print(direction)
 
         #  Determine price
         previous_prices = market.preprices
-
+        # print(previous_prices)
         price = 0
 
         if order_type == 'L':
@@ -84,22 +90,29 @@ class RandomTrader(Agent):
             """
             while price == 0:  # try finding price
                 if day == 0:
-                    price = round(random.uniform(1.01, self.money), r)  # From 0.01 to money
-                elif len(previous_prices) >= 2:  # to be able to compute sigma and mu
-                    # determine the price (add average +- sigma)
-                    mu = mean(previous_prices)
-                    sd = stdev(previous_prices)
-
-                    # print(mu, sd)
-                    if mu > sd:
-                        price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
-                    else:
-                        price = round(random.uniform(1.01, mu + sd), r)
-
-                    # print("WWWWWWWWWWWWWWWWWWWWW")
-                    # print(price)
-                else:
                     price = round(random.uniform(1.01, self.money), r)  # From 1.01 to money
+                    # print('1', price)
+                elif day > 0:
+                    if len(previous_prices) < 2:
+                        price = round(random.uniform(1.01, self.money), r)  # From 1.01 to money
+                        # print('2', price)
+                    elif len(previous_prices) >= 2:  # to be able to compute sigma and mu
+                        # determine the price (add average +- sigma)
+                        mu = mean(previous_prices)
+                        sd = stdev(previous_prices)
+
+                        # print(mu, sd)
+                        if mu > sd:
+                            price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
+                        else:
+                            price = round(random.uniform(1.01, mu + sd), r)
+
+                        # print("WWWWWWWWWWWWWWWWWWWWW")
+                        # print('3', price)
+
+
+
+                # print('price', price)
 
                 # Determine quantity for limit order
                 quantity = 0
@@ -231,7 +244,10 @@ class MarketMaker(Agent):
                 try:
                     quantity = random.randint(1, maxq)
                 except ValueError:
-                    quantity = 1
+                    if maxq == 1:
+                        quantity = 1
+                    else:
+                        continue
 
             elif direction == "BUY":
                 price = pricebuy
@@ -243,8 +259,10 @@ class MarketMaker(Agent):
 
                     quantity = random.randint(1, int(self.money / price))
                 except ValueError:
-
-                    quantity = 1
+                    if int(self.money / price) == 1:
+                        quantity = 1
+                    else:
+                        continue
             else:
                 print('Direction is not specified for the market maker:', id(self))
 

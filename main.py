@@ -71,8 +71,9 @@ for day in range(0, 20):
 
     print('DAY:', day)
     for a in agents:
-        print(a)
-        print(a.wealth())
+        if a.money < 0:
+            print(a)
+            print(a.wealth())
 
         orders = a.order(day=day, market=market)
         time = datetime.datetime.now().timestamp()  # time in seconds
