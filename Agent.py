@@ -158,7 +158,7 @@ class MarketMaker(Agent):
 
         :param day: day number of simulation
         :param market: Market from Market.py to access values
-        :return: order of the agent
+        :return: list of orders for the market maker (will need to itterate over it later
         """
         if day == 0:
             """
@@ -190,45 +190,52 @@ class MarketMaker(Agent):
         print(sigma_sell, sigma_buy, presellprices[0], prebuyprices[len(prebuyprices) - 1])
 
         # Determine the direction
-        if self.stocks > 0:
-            direction = random.choice(("BUY", "SELL"))
-        else:
-            direction = "BUY"
+        # TODO: Should have two orders at the same time. BUY + SELL
+        # if self.stocks > 0:
+        #     direction = random.choice(("BUY", "SELL"))
+        # else:
+        #     direction = "BUY"
 
         # Determine quantity
-        # TODO: need to verify the choice of quantity
-        quantity = 0
-        if direction == "SELL":
-            maxq = self.stocks
-            price = pricesell
-            # print(price)
-            if price == 0:  # Sometimes after rounding price can be zero, thus there is no order
-                order = None
-                return order
-            try:
-                quantity = random.randint(1, maxq)
-            except ValueError:
-                quantity = 1
-        elif direction == "BUY":
-            price = pricebuy
-            # print(price)
-            if price == 0:  # Sometimes after rounding price can be zero, thus there is no order
-                order = None
-                return order
-            try:
+        orders = []
+        for direction in ("BUY", "SELL"):
+            quantity = 0
+            if direction == "SELL":
+                maxq = self.stocks
+                price = pricesell
+                # print(price)
+                if price == 0:  # Sometimes after rounding price can be zero, thus there is no order
+                    order = None
+                    continue
+                try:
+                    quantity = random.randint(1, maxq)
+                except ValueError:
+                    quantity = 1
 
-                quantity = random.randint(1, int(self.money / price))
-            except ValueError:
+            elif direction == "BUY":
+                price = pricebuy
+                # print(price)
+                if price == 0:  # Sometimes after rounding price can be zero, thus there is no order
+                    order = None
+                    continue
+                try:
 
-                quantity = 1
+                    quantity = random.randint(1, int(self.money / price))
+                except ValueError:
 
-        order = {'direction': direction,
-                 'price': price,
-                 'quantity': quantity,
-                 'agent': id(self),
-                 'order_type': order_type}
-        # print("Printing order from order function:", order, "type: MM")
-        return order
+                    quantity = 1
+            else:
+                print('Direction is not specified for the market maker:', id(self))
+
+            order = {'direction': direction,
+                     'price': price,
+                     'quantity': quantity,
+                     'agent': id(self),
+                     'order_type': order_type}
+            # print("Printing order from order function:", order, "type: MM")
+            orders.append(order)
+
+        return orders
 
 
 class HFT(Agent):

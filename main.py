@@ -68,23 +68,38 @@ params = {
     "HFT": []
 }
 
-agents = generate_agents(params, nrt=5, nmm=5)
+agents = generate_agents(params, nrt=50, nmm=50)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
 
-for day in range(0, 4):
+for day in range(0, 10):
 
     print('DAY:', day)
-    for i in agents:
+    for a in agents:
         # print(i)
         # print(i.wealth())
 
-        order = i.order(day=day, market=market)
+        orders = a.order(day=day, market=market)
         time = datetime.datetime.now().timestamp()  # time in seconds
         # print("time:", time)
         # print("\n")
-        market.add_order(order, time)
+        """
+        Need to iterate since market makers can have two orders stored as a list of dictionaries
+        """
+        # print(orders)
+        if type(orders) == list:
+            for order in orders:
+                market.add_order(order, time)
+        elif type(orders) == dict:
+            market.add_order(orders, time)
+        else:
+            try:
+                market.add_order(orders, time)
+            finally:
+                pass
+                # print("Cannot add order, Order type:",  type(orders))
+
     print("BUY:", market.buybook)
     print("SELL:", market.sellbook)
 

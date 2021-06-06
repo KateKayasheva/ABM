@@ -114,7 +114,8 @@ class Market:
             price_buy = order_buy[0]
             time_buy = order_buy[1]
             quantity_buy = order_buy[2]
-            agent_buy = agents_dict[order_buy[3]]
+            buy_id = order_buy[3]
+            agent_buy = agents_dict[buy_id]
             order_type_buy = order_buy[4]
             print('BUY ORDER:', order_buy)
 
@@ -136,6 +137,10 @@ class Market:
                     order_type_sell = order_sell[4]
                     print('SELL ORDER:', order_sell)
                     Q_mod = '*'
+                    if sell_id == buy_id:
+                        print('Cannot match orders from the same agent')
+                        continue
+
                     if quantity_sell == 0:
                         print('Skipped due to q=0')
                         continue
