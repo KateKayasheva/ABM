@@ -89,7 +89,7 @@ class RandomTrader(Agent):
                     # determine the price (add average +- sigma)
                     mu = mean(previous_prices)
                     sd = stdev(previous_prices)
-                    # TODO: Can be negative prices when mu < sd
+
                     # print(mu, sd)
                     if mu > sd:
                         price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
@@ -145,10 +145,11 @@ class RandomTrader(Agent):
                         return order
 
             elif direction == "BUY":
-                # TODO: how to determine quantity for market orders BUY, money can possibly go below zero
+
                 """
                 Will assume for know that the agent is willing to spend everything on the BUY market order
                 (can set this parameter later)
+                Everything is handled in match orders
                 """
                 quantity = None
 
@@ -280,8 +281,14 @@ class HFT(Agent):
         inventory = self.stocks
 
         # Determine prices
+
         prebuyprices = list(filter(None, [x[0] for x in market.prebuy]))  # Do not include market orders
         presellprices = list(filter(None, [x[0] for x in market.presell]))
+        if len(prebuyprices) < 1 or len(presellprices) < 1:
+            """
+            Empty is not useful
+            """
+            return None
 
         prebuyprices.sort()
         presellprices.sort()
@@ -310,5 +317,5 @@ class HFT(Agent):
                      'order_type': order_type}
             # print("Printing order from order function:", order, "type: MM")
             orders.append(order)
-        # print('MM: ', orders)
+        print('HFT: ', orders)
         return orders

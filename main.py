@@ -1,6 +1,6 @@
 # This is a sample Python script.
 
-from Agent import RandomTrader, MarketMaker
+from Agent import RandomTrader, MarketMaker, HFT
 from Market import Market
 import random
 import datetime
@@ -30,15 +30,21 @@ def generate_agents(param, nrt, nmm=0, nhft=0):
 
         agents_list.append(agent)
 
-    for i in range(1, nmm):
-        money = random.randint(rt[0], rt[1])
-        stocks = random.randint(rt[2], rt[3])
+    mm = param["MM"]
+    for i in range(0, nmm):
+        money = random.randint(mm[0], mm[1])
+        stocks = random.randint(mm[2], mm[3])
         agent = MarketMaker(money, stocks)
 
         agents_list.append(agent)
 
-    for i in range(1, nhft):
-        pass
+    hft = param["HFT"]
+    for i in range(0, nhft):
+        money = random.randint(hft[0], hft[1])
+        stocks = random.randint(hft[2], hft[3])
+        agent = HFT(money, stocks)
+
+        agents_list.append(agent)
 
     return agents_list
 
@@ -53,10 +59,10 @@ def agents_dictionary(agents_list):
 params = {
     "RANDOM": [100, 1000, 0, 10],  # min money, max money, min stocks, max stocks
     "MM": [300, 2000, 0, 20],  # made them richer
-    "HFT": []
+    "HFT": [100, 1000, 0, 10]
 }
 
-agents = generate_agents(params, nrt=3, nmm=1)
+agents = generate_agents(params, nrt=5, nmm=5, nhft=1)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
