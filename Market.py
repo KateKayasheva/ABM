@@ -1,6 +1,11 @@
+import pandas as pd
+
 class Market:
     """
-    Class for  the market. Stores buy/sell books
+    Class for  the market.
+    Stores buy/sell books for today and the previous day.
+    Prices the day before.
+    And data needed to be exported for analysis as Pandas.DataFrame
     """
 
     def __init__(self):
@@ -9,6 +14,7 @@ class Market:
         self.prebuy = []
         self.presell = []
         self.preprices = []
+        self.data = None
 
     def clear_books(self):
         """

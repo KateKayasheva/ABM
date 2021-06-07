@@ -72,12 +72,12 @@ for day in range(0, 20):
 
     print('DAY:', day)
     for a in agents:
-        if a.money < 0: print('N------------N')
+        if a.money < 0 or a.stocks < 0: print('N------------N')
         print(a)
         print(a.wealth())
-        if a.money < 0: print('N------------N')
+        if a.money < 0 or a.stocks < 0: print('N------------N')
 
-        if a.money < 0: break
+        if a.money < 0 or a.stocks < 0: break
 
         orders = a.order(day=day, market=market)
         time = datetime.datetime.now().timestamp()  # time in seconds

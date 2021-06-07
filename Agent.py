@@ -117,7 +117,6 @@ class RandomTrader(Agent):
 
 
                 # print('price', price)
-                # TODO: still a possibility of negative money
                 # Determine quantity for limit order
                 quantity = 0
                 if direction == "SELL":
@@ -301,6 +300,8 @@ class HFT(Agent):
         LL = 0
         order_type = 'L'
         inventory = self.stocks
+
+        # TODO: HFT can have negative stocks, this can be a problem
 
         # Determine prices
 
