@@ -39,6 +39,12 @@ class Market:
         a_series = pd.Series(row, index=df1.columns)
         self.data = df1.append(a_series, ignore_index=True)
 
+    def export_db(self, name):
+        path = '/Users/kate/Documents/Programming/ABM/TestData2/'
+
+        df = self.data
+        df.to_csv(path + name, index=False, header=True)
+
     def clear_books(self):
         """
         Reset books to an empty state and copy data for 1 day backup

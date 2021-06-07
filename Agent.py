@@ -79,7 +79,7 @@ class RandomTrader(Agent):
 
         # determine type of the order
 
-        order_type = random.choices(population=("L", "M"), weights=[0.65, 0.35], k=1)[0]
+        order_type = random.choices(population=("L", "M"), weights=[0.70, 0.30], k=1)[0]
         # print(order_type)
         # print(direction)
 

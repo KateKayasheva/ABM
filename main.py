@@ -59,59 +59,67 @@ def agents_dictionary(agents_list):
 
 params = {
     "RANDOM": [100, 1000, 0, 10],  # min money, max money, min stocks, max stocks
-    "MM": [300, 2000, 0, 20],  # made them richer
+    "MM": [300, 2000, 0, 40],  # made them richer
     "HFT": [100, 1000, 0, 10]
 }
 
-agents = generate_agents(params, nrt=5, nmm=5, nhft=1)
+def run(test_number):
+    agents = generate_agents(params, nrt=50, nmm=40, nhft=10)
 
-agents_dict = agents_dictionary(agents)
-market = Market()
-market.create_database()
+    agents_dict = agents_dictionary(agents)
+    market = Market()
+    market.create_database()
 
-for day in range(0, 20):
+    for day in range(0, 150):
 
-    print('DAY:', day)
-    for a in agents:
-        if a.money < 0 or a.stocks < 0: print('N------------N')
-        print(a)
-        print(a.wealth())
-        if a.money < 0 or a.stocks < 0: print('N------------N')
+        print('DAY:', day)
+        for a in agents:
+            if a.money < 0 or a.stocks < 0: print('N------------N')
+            print(a)
+            print(a.wealth())
+            if a.money < 0 or a.stocks < 0: print('N------------N')
 
-        if a.money < 0 or a.stocks < 0: break
+            if a.money < 0 or a.stocks < 0:
+                market.export_db('test_early_exit_{}.csv'.format(test_number))
+                return 0
 
-        orders = a.order(day=day, market=market)
-        time = datetime.datetime.now().timestamp()  # time in seconds
-        # print("time:", time)
-        # print("\n")
-        """
-        Need to iterate since market makers can have two orders stored as a list of dictionaries
-        """
-        # print(orders)
-        if type(orders) == list:
-            for order in orders:
-                market.add_order(order, time)
-        elif type(orders) == dict:
-            market.add_order(orders, time)
-        else:
-            try:
+            orders = a.order(day=day, market=market)
+            time = datetime.datetime.now().timestamp()  # time in seconds
+            # print("time:", time)
+            # print("\n")
+            """
+            Need to iterate since market makers can have two orders stored as a list of dictionaries
+            """
+            # print(orders)
+            if type(orders) == list:
+                for order in orders:
+                    market.add_order(order, time)
+            elif type(orders) == dict:
                 market.add_order(orders, time)
-            finally:
-                pass
-                # print("Cannot add order, Order type:",  type(orders))
+            else:
+                try:
+                    market.add_order(orders, time)
+                finally:
+                    pass
+                    # print("Cannot add order, Order type:",  type(orders))
 
-    print("BUY:", market.buybook)
-    print("SELL:", market.sellbook)
+        print("BUY:", market.buybook)
+        print("SELL:", market.sellbook)
 
-    print('PRICES DAY BEFORE:', market.preprices)
+        print('PRICES DAY BEFORE:', market.preprices)
 
-    market.match_orders(agents_dict)
-    # print("BUY:", market.buybook)
-    # print("SELL:", market.sellbook)
-    market.clear_books()
-    print('--------------------------------------------')
-    print(market.data)
+        market.match_orders(agents_dict)
+        # print("BUY:", market.buybook)
+        # print("SELL:", market.sellbook)
+        market.clear_books()
+        print('--------------------------------------------')
+        print(market.data)
 
-    # for a in agents:
-    #     print(a)
-    #     print(a.wealth())
+    market.export_db('test_{}.csv'.format(test_number))
+        # for a in agents:
+        #     print(a)
+        #     print(a.wealth())
+
+
+for i in range(0,30):
+    run(i)
