@@ -5,6 +5,7 @@ from Market import Market
 import random
 import datetime
 
+
 def generate_agents(param, nrt, nmm=0, nhft=0):
     """
 
@@ -71,9 +72,12 @@ for day in range(0, 20):
 
     print('DAY:', day)
     for a in agents:
-        if a.money < 0:
-            print(a)
-            print(a.wealth())
+        if a.money < 0: print('N------------N')
+        print(a)
+        print(a.wealth())
+        if a.money < 0: print('N------------N')
+
+        if a.money < 0: break
 
         orders = a.order(day=day, market=market)
         time = datetime.datetime.now().timestamp()  # time in seconds

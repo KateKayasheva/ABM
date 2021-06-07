@@ -31,12 +31,16 @@ class Agent:
         """
         Record transaction
         """
+        print("DIRECTION {}, AGENT: {}, STOCKS: {}, MONEY: {}".format(direction, id(self), self.stocks, self.money))
         if direction == "SELL":
             self.stocks -= quantity
             self.money += quantity * price
         elif direction == "BUY":
             self.stocks += quantity
             self.money -= quantity * price
+
+        print("RECORDING ORDER: DIRECTION {}, PRICE {}, Q {}".format(direction, price, quantity))
+        print("DIRECTION {}, AGENT: {}, STOCKS: {}, MONEY: {}".format(direction, id(self), self.stocks, self.money))
 
 
 class RandomTrader(Agent):
@@ -113,7 +117,7 @@ class RandomTrader(Agent):
 
 
                 # print('price', price)
-
+                # TODO: still a possibility of negative money
                 # Determine quantity for limit order
                 quantity = 0
                 if direction == "SELL":
