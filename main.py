@@ -67,6 +67,7 @@ agents = generate_agents(params, nrt=5, nmm=5, nhft=1)
 
 agents_dict = agents_dictionary(agents)
 market = Market()
+market.create_database()
 
 for day in range(0, 20):
 
@@ -109,6 +110,7 @@ for day in range(0, 20):
     # print("SELL:", market.sellbook)
     market.clear_books()
     print('--------------------------------------------')
+    print(market.data)
 
     # for a in agents:
     #     print(a)

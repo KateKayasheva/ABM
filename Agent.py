@@ -114,8 +114,6 @@ class RandomTrader(Agent):
                         # print("WWWWWWWWWWWWWWWWWWWWW")
                         # print('3', price)
 
-
-
                 # print('price', price)
                 # Determine quantity for limit order
                 quantity = 0
@@ -177,7 +175,8 @@ class RandomTrader(Agent):
                  'price': price,
                  'quantity': quantity,
                  'agent': id(self),
-                 'order_type': order_type}
+                 'order_type': order_type,
+                 'day': day}
         # print("Printing order from order function:", order, "type: RANDOM")
         return order
 
@@ -273,7 +272,8 @@ class MarketMaker(Agent):
                      'price': price,
                      'quantity': quantity,
                      'agent': id(self),
-                     'order_type': order_type}
+                     'order_type': order_type,
+                     'day': day}
             # print("Printing order from order function:", order, "type: MM")
             orders.append(order)
         # print('MM: ', orders)
@@ -337,7 +337,8 @@ class HFT(Agent):
                      'price': price,
                      'quantity': quantity,
                      'agent': id(self),
-                     'order_type': order_type}
+                     'order_type': order_type,
+                     'day': day}
             # print("Printing order from order function:", order, "type: MM")
             orders.append(order)
         print('HFT: ', orders)

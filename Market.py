@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 
 class Market:
     """
@@ -15,6 +16,28 @@ class Market:
         self.presell = []
         self.preprices = []
         self.data = None
+
+    def create_database(self):
+        COLUMNS = ['DAY', 'TIME', 'PRICE', 'Q',
+                   'BUYER_ID', 'SELLER_ID',
+                   'BUYER_TYPE', 'SELLER_TYPE',
+                   'BUY_ORDER_TYPE', 'SELL_ORDER_TYPE']
+        self.data = pd.DataFrame(columns=COLUMNS)
+        print(self.data)
+
+    def add_to_db(self, row):
+        """
+        :param row:  list of data (should be in the same order as columns)
+        :return:
+        """
+        COLUMNS = ['DAY', 'TIME', 'PRICE', 'Q',
+                   'BUYER_ID', 'SELLER_ID',
+                   'BUYER_TYPE', 'SELLER_TYPE',
+                   'BUY_ORDER_TYPE', 'SELL_ORDER_TYPE']
+        df1 = self.data.copy()
+
+        a_series = pd.Series(row, index=df1.columns)
+        self.data = df1.append(a_series, ignore_index=True)
 
     def clear_books(self):
         """
@@ -55,12 +78,12 @@ class Market:
         # Separate orders into BUY / SELL
         if order['direction'] == "SELL":
             self.sellbook.append(
-                [order['price'], time, order['quantity'], order['agent'], order['order_type']])
+                [order['price'], time, order['quantity'], order['agent'], order['order_type'], order['day']])
             # self.sellbook.sort(key=lambda x: x[0], reverse=True)  # now sorts on price high to low
             # TODO: sorting with nones inside
         elif order['direction'] == "BUY":
             self.buybook.append(
-                [order['price'], -time, order['quantity'], order['agent'], order['order_type']])
+                [order['price'], -time, order['quantity'], order['agent'], order['order_type'], order['day']])
             # self.buybook.sort(key=lambda x: x[0], reverse=True)
         else:
             print("Error in add_order: direction is not in correct format:",
@@ -123,6 +146,7 @@ class Market:
             buy_id = order_buy[3]
             agent_buy = agents_dict[buy_id]
             order_type_buy = order_buy[4]
+            day = order_buy[5]
 
             print('BUY ORDER:', order_buy)
 
@@ -172,6 +196,11 @@ class Market:
                                 remaining_stocks = 0
                                 Q_mod = quantity
                                 self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
+                                row = [day, datetime.datetime.now().timestamp(), price_sell, quantity,
+                                       id(agent_buy), id(agent_sell),
+                                       agent_buy.type, agent_sell.type,
+                                       order_type_buy, order_type_sell]
+                                self.add_to_db(row)
 
                             elif remaining_stocks > quantity_sell:
                                 quantity = quantity_sell
@@ -183,6 +212,11 @@ class Market:
                                 self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
 
                                 print("DEAL2", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell), price_sell)
+                                row = [day, datetime.datetime.now().timestamp(), price_sell, quantity,
+                                       id(agent_buy), id(agent_sell),
+                                       agent_buy.type, agent_sell.type,
+                                       order_type_buy, order_type_sell]
+                                self.add_to_db(row)
 
                         elif price_sell < price_buy:
                             # TODO: quantity should be adjusted since the price is changed
@@ -196,6 +230,11 @@ class Market:
                                 Q_mod = quantity
                                 self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
                                 print("DEAL3", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell), price_sell)
+                                row = [day, datetime.datetime.now().timestamp(), price_sell, quantity,
+                                       id(agent_buy), id(agent_sell),
+                                       agent_buy.type, agent_sell.type,
+                                       order_type_buy, order_type_sell]
+                                self.add_to_db(row)
 
                             elif remaining_stocks > quantity_sell:
                                 quantity = quantity_sell
@@ -206,6 +245,11 @@ class Market:
                                 Q_mod = quantity
                                 self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
                                 print('DEAL4', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell), price_sell)
+                                row = [day, datetime.datetime.now().timestamp(), price_sell, quantity,
+                                       id(agent_buy), id(agent_sell),
+                                       agent_buy.type, agent_sell.type,
+                                       order_type_buy, order_type_sell]
+                                self.add_to_db(row)
 
 
                     elif order_type_sell == 'M':
@@ -222,6 +266,11 @@ class Market:
                             Q_mod = quantity
                             self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
                             print("DEAL5", 'buyid:', id(agent_buy), 'sellid:', id(agent_sell), price_buy)
+                            row = [day, datetime.datetime.now().timestamp(), price_buy, quantity,
+                                   id(agent_buy), id(agent_sell),
+                                   agent_buy.type, agent_sell.type,
+                                   order_type_buy, order_type_sell]
+                            self.add_to_db(row)
 
 
                         elif remaining_stocks > quantity_sell:
@@ -234,6 +283,11 @@ class Market:
                             print('DEAL6', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell), price_buy)
                             Q_mod = quantity
                             self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
+                            row = [day, datetime.datetime.now().timestamp(), price_buy, quantity,
+                                   id(agent_buy), id(agent_sell),
+                                   agent_buy.type, agent_sell.type,
+                                   order_type_buy, order_type_sell]
+                            self.add_to_db(row)
                     else:
                         print(order_type_buy, order_type_sell, 'skipped L1')
 
@@ -252,6 +306,11 @@ class Market:
                             Q_mod = quantity
                             self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
                             print('DEAL7', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell), price_sell)
+                            row = [day, datetime.datetime.now().timestamp(), price_sell, quantity,
+                                   id(agent_buy), id(agent_sell),
+                                   agent_buy.type, agent_sell.type,
+                                   order_type_buy, order_type_sell]
+                            self.add_to_db(row)
 
                         elif agent_buy.money <= price_sell * quantity_sell:
                             quantity = int(agent_buy.money / price_sell)
@@ -262,6 +321,11 @@ class Market:
                                 Q_mod = quantity
                                 self.change_q_in_order(id=sell_id, delta_q=Q_mod, book="SELL")
                                 print('DEAL8', 'buyid:', id(agent_buy), 'sellid:', id(agent_sell), price_sell)
+                                row = [day, datetime.datetime.now().timestamp(), price_sell, quantity,
+                                       id(agent_buy), id(agent_sell),
+                                       agent_buy.type, agent_sell.type,
+                                       order_type_buy, order_type_sell]
+                                self.add_to_db(row)
 
                     elif order_type_sell == 'M':
                         pass
