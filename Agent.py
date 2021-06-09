@@ -106,10 +106,10 @@ class RandomTrader(Agent):
                         sd = stdev(previous_prices)
 
                         # print(mu, sd)
-                        if mu > sd:
-                            price = round(random.uniform(mu - sd, mu + sd), r)  # to avoid infinite decimal points
+                        if mu > 3*sd:
+                            price = round(random.uniform(mu - 3*sd, mu + 3*sd), r)  # to avoid infinite decimal points
                         else:
-                            price = round(random.uniform(1.01, mu + sd), r)
+                            price = round(random.uniform(1.01, mu + 3*sd), r)
 
                         # print("WWWWWWWWWWWWWWWWWWWWW")
                         # print('3', price)

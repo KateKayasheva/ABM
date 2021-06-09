@@ -40,7 +40,7 @@ class Market:
         self.data = df1.append(a_series, ignore_index=True)
 
     def export_db(self, name):
-        path = '/Users/kate/Documents/Programming/ABM/TestData2/'
+        path = '/Users/kate/Documents/Programming/ABM/TestData4/'
 
         df = self.data
         df.to_csv(path + name, index=False, header=True)
@@ -85,12 +85,12 @@ class Market:
         if order['direction'] == "SELL":
             self.sellbook.append(
                 [order['price'], time, order['quantity'], order['agent'], order['order_type'], order['day']])
-            # self.sellbook.sort(key=lambda x: x[0], reverse=True)  # now sorts on price high to low
+            self.sellbook.sort(key=lambda x: x[1], reverse=True)  # now sorts on time high to low
             # TODO: sorting with nones inside
         elif order['direction'] == "BUY":
             self.buybook.append(
                 [order['price'], -time, order['quantity'], order['agent'], order['order_type'], order['day']])
-            # self.buybook.sort(key=lambda x: x[0], reverse=True)
+            self.buybook.sort(key=lambda x: x[1], reverse=True)
         else:
             print("Error in add_order: direction is not in correct format:",
                   order['direction'], '-> Order from agent:', order['agent'])

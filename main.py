@@ -79,9 +79,9 @@ def run(test_number):
             print(a.wealth())
             if a.money < 0 or a.stocks < 0: print('N------------N')
 
-            if a.money < 0 or a.stocks < 0:
-                market.export_db('test_early_exit_{}.csv'.format(test_number))
-                return 0
+            # if a.money < 0 or a.stocks < 0:
+            #     market.export_db('test_early_exit_{}.csv'.format(test_number))
+            #     return 0
 
             orders = a.order(day=day, market=market)
             time = datetime.datetime.now().timestamp()  # time in seconds
